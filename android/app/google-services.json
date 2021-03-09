@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "191855318770",
+    "project_id": "authsigninsignout",
+    "storage_bucket": "authsigninsignout.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191855318770:android:b8e47129b34611fe76e26b",
+        "android_client_info": {
+          "package_name": "com.authsigninsignout"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "191855318770-dgql457b6lqms07r12dg2bd41k55hep6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJjnmlQkhdjw_prAwStLJVJ91nLihUOMU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "191855318770-dgql457b6lqms07r12dg2bd41k55hep6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "191855318770-4dp9ru3sojoi27pdsnt1aibphao2q2q5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.AuthSignInSignOut"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
