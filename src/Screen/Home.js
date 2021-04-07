@@ -1,43 +1,55 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Button, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, Button, TextInput, Image } from "react-native";
 import Header from "../Component/Header";
 import { Colors } from "../Utils";
 import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import { encrypt, decrypt } from 'react-native-simple-encryption';
-// import database from '@react-native-firebase/database';
-// import { firebase } from '@react-native-firebase/database';
-// const databaseRef = firebase.app().database('https://authsigninsignout-default-rtdb.firebaseio.com');
-
 import { firebase } from '@react-native-firebase/database';
+import ImagePicker from 'react-native-image-crop-picker';
+import { TouchableOpacity } from "react-native-gesture-handler";
+
 const database = firebase.app().database('https://authsigninsignout-default-rtdb.firebaseio.com');
 const Home = ({ navigation }) => {
-    const object = {
-        name: 'Test',
-        email: 'test@gmail.com',
-        gender: 'male',
-        pass: 'Test@123'
-    }
-
+    const [item, setItem] = useState(null);
     const id = auth().currentUser.uid;
     console.log(id);
     database.ref(`/users/${id}`)
-        // .get(object)
-        // .then(() => console.log('Data set.'));
         .once('value')
         .then(res => {
-            console.log('User data new: ', res);
+            // console.log('User data new: ', res);
         });
-    // .on('child_added', snapshot => {
-    //     console.log('A new node has been added', snapshot.val());
-    // });
-
-
+    { item && console.log(item); }
     return (
         <>
             <Header hedertitle='Home' />
             <View style={styles.subcontainer}>
                 <Text>Home</Text>
+
+            </View>
+            <View>
+                <TouchableOpacity
+                    onPress={() => {
+                        ImagePicker.openPicker({
+                            width: 300,
+                            height: 400,
+                            cropping: true
+                        }).then(image => {
+                            setItem(image);
+                        })
+                    }}
+                >
+                    <Text>hello</Text>
+                </TouchableOpacity>
+
+                {/* <Image
+                    style={{
+                        width: 90,
+                        height: 90,
+                        // resizeMode: 'contain',
+                        borderRadius: 90 / 2,
+                        overflow: 'hidden'
+                    }}
+                    source={{ uri: item.sourceURL }}
+                /> */}
             </View>
         </>
     );
@@ -63,8 +75,8 @@ const styles = StyleSheet.create({
     },
     subcontainer: {
         marginVertical: 10,
-        justifyContent: 'space-around',
-        flexDirection: 'row'
+        // justifyContent: 'space-around',
+        // flexDirection: 'row'
     }
 })
 export default Home;

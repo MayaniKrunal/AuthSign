@@ -1,11 +1,10 @@
 import React, { useState, useContext } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, ImageBackground, SafeAreaView, Image } from "react-native";
+import { StyleSheet, Text, View, ImageBackground, SafeAreaView, Image } from "react-native";
 import AuthButton from "../Component/Button";
 import Textinput from "../Component/Textinput";
 import RadioButton from "../Component/RadioButton";
 import { Icons, Colors } from "../Utils";
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 import { encrypt, decrypt } from 'react-native-simple-encryption';
 import { Context as Authcontext } from "../context/Authcontext";
 

@@ -6,6 +6,9 @@ import auth from '@react-native-firebase/auth';
 import { Colors, Icons } from "../Utils";
 import { encrypt, decrypt } from 'react-native-simple-encryption';
 import { Context as Authcontext } from "../context/Authcontext";
+import { USER_DATA } from "../Action/type";
+import { connect, useDispatch } from 'react-redux';
+import AuthAction from "../Action/AuthAction";
 export default SignIn = ({ navigation }) => {
     const { state, SignIn, AutoSign } = useContext(Authcontext);
     const [email, setemail] = useState(null);
@@ -16,8 +19,7 @@ export default SignIn = ({ navigation }) => {
     const [ErrMsg, setErrMsg] = useState(null);
     const Email_validation = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const Pass_validation = /^.*(?=.{8,64})(?=..*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.:?]).*$/;
-
-
+    const dispatch = useDispatch();
     useEffect(() => {
         var user = auth().currentUser;
         if (user !== null) {
@@ -29,20 +31,28 @@ export default SignIn = ({ navigation }) => {
 
     const valigationform = () => {
         if (email !== null && password !== null) {
-            SignIn({ email, password }, () => navigation.navigate('TabNav'))
-            // setloading(true);
-            // auth().signInWithEmailAndPassword(email, encrypt('@123', password))
-            //     .then((res) => {
-            //         console.log(res.user.uid);
-            //         console.log(' signed in!');
-            //         setErrMsg(null);
-            //         navigation.navigate('TabNav')
-            //         setloading(false);
-            //     })
-            //     .catch((error) => {
-            // setloading(false);
-            //         setErrMsg('Email address and password is worng!');
-            //     });
+
+
+            // use Context ====
+            // SignIn({ email, password }, () => navigation.navigate('TabNav'))
+            // =======
+
+            setloading(true);
+            auth().signInWithEmailAndPassword(email, encrypt('@123', password))
+                .then((response) => {
+                    navigation.navigate('TabNav')
+
+                    console.log('user: ', response.user._user);
+                    dispatch({ type: USER_DATA, payload: response.user._user });
+                    // console.log(response.user.uid);
+                    console.log(' signed in!');
+                    setErrMsg(null);
+                    setloading(false);
+                })
+                .catch((error) => {
+                    setloading(false);
+                    setErrMsg('Email address and password is worng!');
+                });
         }
     }
     const emailHandle = (email) => {
@@ -55,7 +65,6 @@ export default SignIn = ({ navigation }) => {
             setEmailErrmsg(null);
         }
     }
-
     const passwordHandle = (password) => {
         setpassword(password);
         if (password.length === 0) {

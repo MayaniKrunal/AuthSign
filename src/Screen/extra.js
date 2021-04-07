@@ -1,151 +1,248 @@
-import React, { useState, useContext, useEffect } from "react";
-import { StyleSheet, View, Text, SafeAreaView, } from "react-native";
-import DrawerHeader from "../Component/DrawerHeader";
-import { DrawerActions } from '@react-navigation/native';
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
-import Textinput from "../Component/Textinput";
-import { Colors } from '../Utils';
-import RadioButton from "../Component/RadioButton";
-import Button from "../Component/Button";
-import { decrypt, encrypt } from 'react-native-simple-encryption';
-import { Context as Authcontext } from "../context/Authcontext";
-import { set } from "react-native-reanimated";
-
-const Profile = ({ navigation, route }) => {
-    const [indexValue, setindexValue] = useState(null);
-    const { state, getUserData, updateUserDate } = useContext(Authcontext);
-    const [radioButton, setradioButton] = useState(null);
-    const [email, setemail] = useState(null);
-    const [name, setname] = useState(null);
-    const [password, setpassword] = useState(null);
-    const [ErrMsg, setErrMsg] = useState(null);
-    const Email_validation = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/;
-    const Pass_validation = /^.*(?=.{8,64})(?=..*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.:?]).*$/;
-
-    const handleData = () => {
-        // () => navigation.navigate('ProfileEdit')
-        console.log('Button Press !');
-        if (email !== null && name !== null && password !== null && radioButton !== null) {
-            let object = {
-                name: name,
-                email: email,
-                password: encrypt('@123', password),
-                gender: radioButton
-            };
-            updateUserDate({ object }, () => navigation.navigate('TabNav'))
-            // SignUp({ object }, () => navigation.navigate('TabNav')
-        } else {
-            console.log('fill all information');
-        }
-
-    }
-    useEffect(() => {
-        getUserData();
-
-        if (state.UserData !== undefined) {
-            setname(state.UserData.name);
-            setemail(state.UserData.email);
-            setradioButton(state.UserData.gender);
-            setpassword(decrypt('@123', state.UserData.password));
-        }
-
-    }, [])
-    let object = {
-        name: name,
-        email: email,
-        password: password
-    };
-    // console.log(object);
-
-
-    const namehandle = (name) => {
-        setname(name);
-        setindexValue(0);
-        setErrMsg(null)
-        if (name.length === 0) {
-            setErrMsg('Name is Require!');
-        }
-    }
-    const emailHandle = (email) => {
-        setemail(email);
-        setindexValue(1);
-        if (email.length === 0) {
-            setErrMsg('Email is Require!');
-        }
-        else if (Email_validation.test(email) === false) {
-            setErrMsg('Email is not valid!')
-        } else if (Email_validation.test(email) === true && email.length !== 0) {
-            setErrMsg(null);
-        }
-    }
-    const passwordHandle = (password) => {
-        setpassword(password);
-        setindexValue(2);
-        if (password.length === 0) {
-            setErrMsg('Password is Require!');
-        } else if (password.length < 8) {
-            setErrMsg('Password must be 8 characters!');
-        } else if (Pass_validation.test(password) === false) {
-            setErrMsg('Passwrod in Enter Uppercase Lowercase Special charcter and Number')
-        } else if (password.length > 7 && Pass_validation.test(password) === true) {
-            setErrMsg(null)
-        }
-    }
-    return (
-        <>
-            <DrawerHeader hedertitle='Profile'
-                onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-            />
-            <View style={{ backgroundColor: Colors.blue, flex: 1 }} >
-                <View style={{ flex: 1 }}>
-                    <Text>Profile</Text>
-                </View>
-                <View style={{ flex: 3 }}>
-                    <Textinput
-
-                        label='Name'
-                        placeholder='Enter the name'
-                        value={name}
-                        onChangeText={(value) => namehandle(value)}
-                    />
-                    {0 === indexValue && ErrMsg && <Text style={styles.errMsgcontainer}>{ErrMsg} </Text>}
-                    <Textinput
-
-                        label='Email'
-                        placeholder='Enter the Email'
-                        value={email}
-                        onChangeText={(value) => emailHandle(value)}
-                    />
-                    {1 === indexValue && ErrMsg && <Text style={styles.errMsgcontainer}>{ErrMsg} </Text>}
-                    <Textinput
-
-                        label='Password'
-                        placeholder='Enter the Password'
-                        value={password}
-                        onChangeText={(value) => passwordHandle(value)}
-                        secureTextEntry={true}
-                    />
-                    {2 === indexValue && ErrMsg && <Text style={styles.errMsgcontainer}>{ErrMsg} </Text>}
-                    <RadioButton
-                        value={radioButton}
-                        onPress={(value) => setradioButton(value)}
-                        onChangeText={(value) => setradioButton(value)}
-                    />
-                    <Button
-                        title='Update'
-                        onPress={handleData}
-                    />
-                </View>
-            </View>
-        </>
-    );
+const { useState, useEffect } = React;
+const { useSpring, animated, interpolate } = ReactSpring;
+const { useDrag } = ReactUseGesture;
+const rootElement = document.getElementById("root");
+const height = window.innerHeight;
+const width = window.innerWidth;
+let w = 400;
+if (width <= 500) {
+  w = width;
+}
+const content = [
+  {
+    contentL1: "Online",
+    contentL2: "GAMBLING",
+    contentL3:
+      "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia.",
+    src:
+      "https://github.com/Cuberto/liquid-swipe/blob/master/Example/liquid-swipe/Images.xcassets/firstPageImage.imageset/firstPageImage@3x.png?raw=true",
+  },
+  {
+    contentL1: "For",
+    contentL2: "GAMERS",
+    contentL3:
+      "Temporibus autem aut officiis debitis aut rerum necessitatibus.",
+    src:
+      "https://raw.githubusercontent.com/Cuberto/liquid-swipe/master/Example/liquid-swipe/Images.xcassets/secondPageImage.imageset/secondPageImage%403x.png",
+  },
+  {
+    contentL1: "Online",
+    contentL2: "GAMBLING",
+    contentL3:
+      "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia.",
+    src:
+     "https://github.com/Cuberto/liquid-swipe/blob/master/Example/liquid-swipe/Images.xcassets/firstPageImage.imageset/firstPageImage@3x.png?raw=true",
+  },
+];
+const keyMap = {
+  0: 1,
+  1: 2,
+  2: 0,
 };
-const styles = StyleSheet.create({
-    errMsgcontainer: {
-        color: Colors.creem,
-        marginHorizontal: 25,
+const getPath = (y, x, width) => {
+  const anchorDistance = 200 + x * 0.5;
+  const curviness = anchorDistance - 60;
+  return `M0, 
+    ${height} 
+    H0V0h${width}v 
+    ${y - anchorDistance} 
+    c0, 
+    ${curviness} 
+    , 
+   ${x} 
+    , 
+    ${curviness} 
+    , 
+   ${x} 
+    , 
+    ${anchorDistance} 
+    S${width}, 
+    ${y} 
+    ,${width}, 
+    ${y + anchorDistance * 2}
+    V
+    ${height}
+    z`;
+};
+const Page = ({ data, index, setActive, gone = false }) => {
+  const [isGone, setGone] = useState(gone);
+  const [isMove, setMove] = useState(false);
+  const { contentL1, contentL2, contentL3, src } = data;
+  const [{ posX, posY }, setPos] = useSpring(() => ({
+    posX: -50,
+    posY: height * 0.72 - 20,
+    config: {
+      mass: 3,
     },
-});
+  }));
+  const [{ d }, setDvalue] = useSpring(() => ({
+    d: gone ? getPath(0, 0, w) : getPath(height * 0.72, 0, 0),
+    config: {
+      mass: 3,
+    },
+    onRest: () => {
+      if (isGone) {
+        setDvalue(getPath(0, 0, w));
+      }
+    },
+  }));
 
-export default Profile;
+  // swiper display ------------
+  useEffect(() => {
+    if (!gone) {
+      setDvalue({
+        d: getPath(height * 0.72, 48, 5),
+      });
+      setTimeout(() => {
+        setPos({
+          posX: 7,
+        });
+      }, 100);
+    }
+  }, [gone]);
+// -----------
+  const bind = useDrag(({ down, movement: [mx], xy: [, my], vxvy: [vx] }) => {
+    if (!isGone) {
+      if (down && isMove) {
+        setDvalue({
+          d: getPath(my, mx + 60, 10),
+        });
+        setPos({
+          posX: mx + 20,
+          posY: my - 20,
+        });
+        if (mx > 200 || vx > 3) {
+          setDvalue({
+            d: getPath(my, -50, w),
+          });
+          setGone(true);
+          setTimeout(() => {
+            setDvalue({
+              d: getPath(my, 0, w),
+            });
+            setActive(index);
+          }, 240);
+        }
+      } else {
+        setDvalue({
+          d: getPath(height * 0.72, 48, 5),
+        });
+        setPos({
+          posX: 7,
+          posY: height * 0.72 - 20,
+        });
+      }
+    }
+  });
+  return (
+    <div id={`pageContainer${index}`} className="pageContainer" {...bind()}>
+      <svg version="1.1" id="blob" xmlns="http://www.w3.org/2000/svg">
+        <clipPath id={`clipping${index}`}>
+          <animated.path id={`blob-path${index}`} d={d} />
+        </clipPath>
+      </svg>
+      <div
+        id={`page${index}`}
+        className="page"
+        style={{
+          clipPath: `url(#clipping${index})`,
+          WebkitClipPath: `url(#clipping${index})`,
+        }}
+      >
+        <div id={`header${index}`} className="header">
+          <div>GameCoin</div>
+          <div className={`skip text${index}`}>SKIP</div>
+        </div>
+        <img alt={`img${index}`} src={src} />
+        <div id="content">
+          <div className={`contentL1 text${index}`}>{contentL1}</div>
+          <div className={`contentL2 text${index}`}>{contentL2}</div>
+          <div className={`contentL3 text${index}`}>{contentL3}</div>
+        </div>
+      </div>
+      <animated.button
+        className={`button${index}`}
+        onMouseDown={() => {
+          setMove(true);
+        }}
+        onMouseUp={() => {
+          setMove(false);
+        }}
+        onTouchStart={() => {
+          setMove(true);
+        }}
+        onTouchEnd={() => {
+          setMove(false);
+        }}
+        style={{
+          opacity: posX.interpolate({
+            range: [0, 100],
+            output: [1, 0],
+          }),
+          transform: interpolate(
+            [
+              posX.interpolate((x) => `translateX(${x}px)`),
+              posY.interpolate((y) => `translateY(${y}px)`),
+            ],
+            (translateX, translateY) => `${translateX} ${translateY}`
+          ),
+        }}
+      >
+        {">"}
+      </animated.button>
+    </div>
+  );
+};
+const App = () => {
+  const [isActive, setActive] = useState(0);
+  const [elm, setElm] = useState([
+
+    //---- first page
+    <Page
+      key={0}
+      data={content[0]}
+      index={0}
+      setActive={setActive}
+      gone={true}
+    />,
+    //---
+  ]);
+
+  useEffect(() => {
+    const key = keyMap[isActive];
+    if (elm.length === 2) {
+      setTimeout(() => {
+        setElm([
+          ...elm.slice(1, 3),
+          <Page
+            key={key}
+            data={content[key]}
+            index={key}
+            setActive={setActive}
+          />,
+        ]);
+      }, 600);
+    } else {
+      setElm([
+        ...elm,
+        <Page
+          key={key}
+          data={content[key]}
+          index={key}
+          setActive={setActive}
+        />,
+      ]);
+    }
+  }, [isActive]);
+  return (
+    <>
+      <div id="container">{elm}</div>
+    </>
+  );
+};
+
+
+ReactDOM.render(
+    <App />,
+  rootElement
+);

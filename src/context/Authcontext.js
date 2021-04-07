@@ -44,8 +44,6 @@ const getUserData = dispatch => {
         }
     }
 }
-
-
 const SignUp = dispatch => {
     return async ({ object }, callback) => {
         // console.log(object.email);
@@ -64,10 +62,9 @@ const SignUp = dispatch => {
             });
     }
 }
-
 const updateUserDate = () => {
     return async ({ object }, callback) => {
-        console.log(object);
+        // console.log(object);
         const id = auth().currentUser.uid;
 
         firestore().collection('Users').doc(id).update(object)
